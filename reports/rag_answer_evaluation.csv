@@ -1,0 +1,59 @@
+question,should_answer,answer,refused,correct_behavior,unsupported_claim,expected_source,retrieved_sources,source_correct,keyword_coverage,latency_seconds
+What controls are defined for detecting a missing circlip?,True,"Answer:
+Circlip presence detection, pressure monitoring, and scanner verification.
+
+Evidence:
+- control_plan_piston_assembly.md, chunk-0000
+
+Sources:
+- control_plan_piston_assembly.md
+
+Confidence:
+High",False,1,0,control_plan_piston_assembly.md,pfmea_piston_assembly.md | control_plan_piston_assembly.md | inspection_standard.md,1,0.6666666666666666,178.6458831
+What historical evidence exists for a compression ring breaking after final inspection?,True,"Answer:
+Insufficient evidence in the retrieved quality documents.
+
+Evidence:
+- Historical 8D Cases (H8D-001 and H8D-002) do not provide information on compression ring breaking after final inspection.
+
+Sources:
+- historical_8d_cases.md
+
+Confidence:
+Low",True,0,0,historical_8d_cases.md,historical_8d_cases.md | pfmea_piston_assembly.md | pfmea_piston_assembly.md,1,0.0,163.80592279999928
+What process variables should be reviewed for a broken compression ring?,True,"Answer:
+Assembly force and ring loading condition should be reviewed.
+
+Evidence:
+- Review assembly force trend (pfmea_piston_assembly.md, chunk-0007)
+- Check ring loading condition (pfmea_piston_assembly.md, chunk-0007)
+
+Sources:
+- pfmea_piston_assembly.md
+
+Confidence:
+High",False,1,0,pfmea_piston_assembly.md,pfmea_piston_assembly.md | pfmea_piston_assembly.md | historical_8d_cases.md,1,0.3333333333333333,162.7830812000002
+What inspection is defined for ring condition?,True,"Answer:
+Ring damage inspection.
+
+Evidence:
+- Check: Ring damage (inspection_standard.md, chunk-0004)
+
+Sources:
+- inspection_standard.md
+
+Confidence:
+High",False,1,0,inspection_standard.md,pfmea_piston_assembly.md | pfmea_piston_assembly.md | inspection_standard.md,1,0.3333333333333333,156.70989129999998
+What should the operator do if ring mounting resistance is abnormal?,True,"Answer:
+Stop production.
+
+Evidence:
+- Work Instruction – Ring Assembly (chunk-0009)
+
+Sources:
+- work_instruction_ring_assembly.md
+
+Confidence:
+High",False,1,0,work_instruction_ring_assembly.md,pfmea_piston_assembly.md | work_instruction_ring_assembly.md | work_instruction_ring_assembly.md,1,0.3333333333333333,142.35413100000005
+What is the approved supplier for the circlip?,False,Insufficient evidence in the retrieved quality documents.,True,1,0,,pfmea_piston_assembly.md | inspection_standard.md | control_plan_piston_assembly.md,1,1.0,20.170816900000318
+What is the approved torque specification for the circlip machine?,False,Insufficient evidence in the retrieved quality documents.,True,1,0,,pfmea_piston_assembly.md | control_plan_piston_assembly.md | inspection_standard.md,1,1.0,17.650091900000007

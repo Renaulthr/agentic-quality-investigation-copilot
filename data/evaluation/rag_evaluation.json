@@ -1,0 +1,64 @@
+[
+  {
+    "question": "What controls are defined for detecting a missing circlip?",
+    "expected_source": "control_plan_piston_assembly.md",
+    "expected_keywords": [
+      "sensor detection",
+      "pressure monitoring",
+      "scanner verification"
+    ],
+    "should_answer": true
+  },
+  {
+    "question": "What historical evidence exists for a compression ring breaking after final inspection?",
+    "expected_source": "historical_8d_cases.md",
+    "expected_keywords": [
+      "internal inspection records were OK",
+      "packaging damage",
+      "handling or transport damage"
+    ],
+    "should_answer": true
+  },
+  {
+    "question": "What process variables should be reviewed for a broken compression ring?",
+    "expected_source": "pfmea_piston_assembly.md",
+    "expected_keywords": [
+      "assembly force",
+      "ring mounting",
+      "handling"
+    ],
+    "should_answer": true
+  },
+  {
+    "question": "What inspection is defined for ring condition?",
+    "expected_source": "inspection_standard.md",
+    "expected_keywords": [
+      "ring presence",
+      "ring damage",
+      "ring orientation"
+    ],
+    "should_answer": true
+  },
+  {
+    "question": "What should the operator do if ring mounting resistance is abnormal?",
+    "expected_source": "work_instruction_ring_assembly.md",
+    "expected_keywords": [
+      "stop production",
+      "hold suspected assembly",
+      "inspect mounting tool"
+    ],
+    "should_answer": true
+  },
+  {
+    "question": "What is the approved supplier for the circlip?",
+    "expected_source": null,
+    "expected_keywords": [],
+    "should_answer": false
+  },
+  {
+    "question": "What is the approved torque specification for the circlip machine?",
+    "expected_source": null,
+    "expected_keywords": [],
+    "should_answer": false
+  }
+]

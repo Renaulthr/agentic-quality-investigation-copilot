@@ -1,0 +1,105 @@
+{
+  "complaint_id": "CMP-004",
+  "complaint": {
+    "found": true,
+    "data": {
+      "Complaint_ID": "CMP-004",
+      "Date": "2026-03-07",
+      "Customer": "Customer-C",
+      "Issue": "Compression ring broken",
+      "Model": "Nitride",
+      "Severity": "High"
+    }
+  },
+  "traceability": {
+    "found": true,
+    "data": {
+      "Complaint_ID": "CMP-004",
+      "Machine_ID": "ASM-04",
+      "Shift": "B",
+      "Assembly_Force": 82.6,
+      "Temperature": 36.9,
+      "Pressure": 7.4,
+      "Cycle_Time": 19.8,
+      "Ring_Gap": 0.96,
+      "Ring_Presence": 1,
+      "Circlip_Presence": 1,
+      "Oil_Ring_Presence": 1,
+      "Final_Inspection": "OK"
+    }
+  },
+  "quality_risk": {
+    "success": true,
+    "complaint_id": "CMP-004",
+    "input_features": {
+      "Shift": "B",
+      "Model": "Nitride",
+      "Machine_ID": "ASM-04",
+      "Temperature": 36.9,
+      "Pressure": 7.4,
+      "Cycle_Time": 19.8,
+      "Assembly_Force": 82.6,
+      "Ring_Gap": 0.96,
+      "Ring_Presence": 1,
+      "Circlip_Presence": 1,
+      "Oil_Ring_Presence": 1
+    },
+    "prediction": {
+      "defect_risk_score": 0.6913,
+      "operating_threshold": 0.16,
+      "quality_prediction": "HIGH RISK",
+      "defect_risk_prediction": 1,
+      "anomaly_score": 0.1432,
+      "process_condition": "ANOMALOUS",
+      "anomaly_prediction": 1,
+      "quality_state": "Critical Risk",
+      "recommended_action": "Hold assembly and perform immediate quality verification."
+    }
+  },
+  "historical_cases": {
+    "query": "Compression ring broken",
+    "matches": [
+      {
+        "source": "historical_8d_cases.md",
+        "chunk_id": "chunk-0002",
+        "distance": 1.036555290222168,
+        "content": "# Historical 8D Cases\n\n## Case H8D-001\nIssue:\nCompression ring broken during internal inspection.\n\nEvidence:\n- High assembly force observed\n- Ring mounting tool wear identified\n\nConfirmed Cause:\nWorn mounting tool caused excessive ring stress.\n\nCorrective Action:\nTool replaced and preventive inspection frequency increased.\n\n\n## Case H8D-002\nIssue:\nCompression ring broken at customer end.\n\nEvidence:\n- Internal inspection records were OK\n- Assembly force within normal range\n- Retained samples OK\n- Packaging damage observed\n\nInvestigation Conclusion:\nPost-inspection handling or transport damage considered most likely.\n\nCorrective Action:\nPackaging reinforcement and handling review."
+      }
+    ]
+  },
+  "rag_evidence": [
+    {
+      "source": "historical_8d_cases.md",
+      "chunk_id": "chunk-0002",
+      "distance": 1.036555290222168,
+      "content": "# Historical 8D Cases\n\n## Case H8D-001\nIssue:\nCompression ring broken during internal inspection.\n\nEvidence:\n- High assembly force observed\n- Ring mounting tool wear identified\n\nConfirmed Cause:\nWorn mounting tool caused excessive ring stress.\n\nCorrective Action:\nTool replaced and preventive inspection frequency increased.\n\n\n## Case H8D-002\nIssue:\nCompression ring broken at customer end.\n\nEvidence:\n- Internal inspection records were OK\n- Assembly force within normal range\n- Retained samples OK\n- Packaging damage observed\n\nInvestigation Conclusion:\nPost-inspection handling or transport damage considered most likely.\n\nCorrective Action:\nPackaging reinforcement and handling review."
+    },
+    {
+      "source": "pfmea_piston_assembly.md",
+      "chunk_id": "chunk-0007",
+      "distance": 1.1757762432098389,
+      "content": "### Failure Mode: Compression Ring Broken\n\nPotential Effect:\n- Reduced sealing performance\n- Customer complaint\n- Engine performance concern\n\nPotential Causes:\n- Excessive assembly force\n- Incorrect ring mounting\n- Ring handling damage\n- Post-inspection handling damage\n\nCurrent Controls:\n- Assembly force monitoring\n- Visual inspection\n- Camera-based presence verification\n- Final inspection\n\nRecommended Action:\n- Review assembly force trend\n- Inspect retained sample\n- Check ring loading condition\n- Review downstream handling"
+    },
+    {
+      "source": "pfmea_piston_assembly.md",
+      "chunk_id": "chunk-0006",
+      "distance": 1.223003625869751,
+      "content": "## Process: Ring Assembly\n\n### Failure Mode: Compression Ring Missing\nPotential Effect:\n- Incomplete piston assembly\n- Engine performance concern\n- Customer rejection\n\nPotential Causes:\n- Ring feeding failure\n- Incorrect manual loading\n- Sensor bypass\n- Ring mounting sequence interruption\n\nCurrent Controls:\n- Ring presence verification\n- Camera inspection\n- Final visual inspection\n\nRecommended Action:\n- Verify sensor response\n- Review ring feeder condition\n- Confirm sequence poka-yoke status"
+    },
+    {
+      "source": "work_instruction_ring_assembly.md",
+      "chunk_id": "chunk-0009",
+      "distance": 1.2677799463272095,
+      "content": "# Work Instruction \u2013 Ring Assembly\n\n## Objective\n\nEnsure correct mounting of piston rings without damage.\n\n## Procedure\n\n1. Confirm correct piston model.\n2. Verify ring set availability.\n3. Inspect ring condition before loading.\n4. Load rings according to defined sequence.\n5. Confirm mounting tool condition.\n6. Perform ring assembly.\n7. Verify ring presence using inspection system.\n8. Transfer assembly only after OK confirmation.\n\n## Abnormal Conditions\n\nStop production if:\n- Ring is missing\n- Ring is broken\n- Ring mounting resistance is abnormal\n- Camera inspection fails\n- Sequence verification fails"
+    }
+  ],
+  "investigation_summary": "**Summary of Investigation Evidence**\n\n**Confirmed Facts:**\n\n* The complaint received on 2026-03-07 is related to a compression ring broken issue.\n* The machine ID associated with the complaint is ASM-04.\n* The assembly force was 82.6, and the temperature was 36.9.\n* The final inspection was OK.\n\n**Possible Indications:**\n\n* High assembly force observed (similar to Case H8D-001).\n* Ring mounting tool wear identified (similar to Case H8D-001).\n* Packaging damage observed (similar to Case H8D-002).\n\n**ML Quality Risk Output:**\n\n* Defect risk score: 0.6913\n* Quality prediction: HIGH RISK\n* Recommended action: Hold assembly and perform immediate quality verification.\n\n**Historical Cases:**\n\n* Case H8D-001: Worn mounting tool caused excessive ring stress.\n* Case H8D-002: Post-inspection handling or transport damage considered most likely.\n\n**Retrieved Quality Documents:**\n\n* Historical 8D Cases: Compression ring broken during internal inspection.\n* PFMEA Piston Assembly: Potential causes include excessive assembly force, incorrect ring mounting, and ring handling damage.\n* Work Instruction Ring Assembly: Abnormal conditions include ring missing, ring broken, and abnormal mounting resistance.\n\n**Process Risk Indicators:**\n\n* None identified.\n\n**Historical Similarities:**\n\n* Similar issues with compression ring broken and assembly force.\n\n**Evidence Gaps:**\n\n* None identified.",
+  "root_cause_hypothesis": "Root Cause Hypothesis:\nPossible cause of the compression ring broken issue is related to excessive assembly force, specifically the assembly force being higher than the recommended value.\n\nSupporting Evidence:\n- High assembly force observed (82.6) is similar to Case H8D-001, where worn mounting tool caused excessive ring stress.\n- Historical PFMEA Piston Assembly suggests potential causes include excessive assembly force.\n- Similar issues with compression ring broken and assembly force have been identified in historical cases.\n\nContradicting Evidence:\n- The final inspection was OK, which suggests that the issue may not be solely related to the assembly process.\n- The ML model prediction is supporting evidence, but it is not proof of root cause.\n\nAdditional Verification Required:\n- Verify the assembly force value and ensure it is within the recommended range.\n- Inspect the ring mounting tool for wear and damage.\n- Review the assembly process to ensure it is being performed correctly.",
+  "evidence_strength": "Strong",
+  "confidence": "High",
+  "requires_human_review": true,
+  "human_approved": true,
+  "human_comment": "Approved for further verification of abnormal process parameters.",
+  "final_report": "**Quality Investigation Report**\n\n**Complaint Summary:**\n\nA complaint was received on 2026-03-07 regarding a compression ring broken issue in a Nitride model. The customer reported a high severity issue.\n\n**Confirmed Evidence:**\n\n* The complaint is related to a compression ring broken issue.\n* The machine ID associated with the complaint is ASM-04.\n* The assembly force was 82.6, and the temperature was 36.9.\n* The final inspection was OK.\n\n**ML / Process Risk Assessment:**\n\n* Defect risk score: 0.6913\n* Quality prediction: HIGH RISK\n* Recommended action: Hold assembly and perform immediate quality verification.\n\n**Root Cause Assessment:**\n\n* Possible cause of the compression ring broken issue is related to excessive assembly force, specifically the assembly force being higher than the recommended value.\n* Supporting evidence includes:\n\t+ High assembly force observed (82.6) is similar to Case H8D-001, where worn mounting tool caused excessive ring stress.\n\t+ Historical PFMEA Piston Assembly suggests potential causes include excessive assembly force.\n\t+ Similar issues with compression ring broken and assembly force have been identified in historical cases.\n\n**Evidence Strength:**\n\n* Strong\n\n**Confidence:**\n\n* High\n\n**Recommended Verification / Action:**\n\n* Verify the assembly force value and ensure it is within the recommended range.\n* Inspect the ring mounting tool for wear and damage.\n* Review the assembly process to ensure it is being performed correctly.\n\n**Human Review:**\n\n* Approved for further verification of abnormal process parameters.\n\n**Conclusion:**\n\nThe investigation suggests that excessive assembly force is a possible cause of the compression ring broken issue. Further verification is required to confirm this hypothesis.",
+  "errors": []
+}

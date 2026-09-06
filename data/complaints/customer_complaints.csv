@@ -1,0 +1,6 @@
+Complaint_ID,Date,Customer,Issue,Model,Severity
+CMP-001,2026-01-14,Customer-A,Compression ring broken,PVD,High
+CMP-002,2026-02-03,Customer-B,Circlip missing,Nitride,Critical
+CMP-003,2026-02-19,Customer-A,Ring missing,PVD,High
+CMP-004,2026-03-07,Customer-C,Compression ring broken,Nitride,High
+CMP-005,2026-03-22,Customer-B,Assembly damage,PVD,Medium

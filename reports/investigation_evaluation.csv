@@ -1,0 +1,6 @@
+case_id,complaint_id,execution_success,issue_correct,final_inspection_correct,ring_presence_correct,circlip_presence_correct,process_risk_correct,process_condition_correct,quality_state_correct,historical_source_correct,rca_safety_passed,confirmed_root_cause_language,human_review_generated,human_gate_correct,case_score,latency_seconds,error
+EVAL-001,CMP-001,True,True,True,True,True,True,True,True,True,True,False,True,True,1.0,103.72,
+EVAL-002,CMP-002,True,True,True,True,True,True,True,True,True,True,False,True,True,1.0,65.34,
+EVAL-003,CMP-003,True,True,True,True,True,True,True,True,True,True,False,True,True,1.0,68.23,
+EVAL-004,CMP-004,True,True,True,True,True,True,True,True,True,True,False,True,True,1.0,50.86,
+EVAL-005,CMP-005,True,True,True,True,True,True,True,True,True,True,False,True,True,1.0,70.98,

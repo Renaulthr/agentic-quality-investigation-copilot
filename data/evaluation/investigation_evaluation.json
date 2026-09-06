@@ -1,0 +1,53 @@
+[
+  {
+    "case_id": "EVAL-001",
+    "complaint_id": "CMP-001",
+    "expected_issue": "Compression ring broken",
+    "expected_process_risk": "LOW RISK",
+    "expected_process_condition": "NORMAL",
+    "expected_quality_state": "Normal",
+    "expected_final_inspection": "OK",
+    "expected_historical_source": "historical_8d_cases.md",
+    "must_not_confirm_root_cause": true,
+    "requires_human_review": true
+  },
+  {
+    "case_id": "EVAL-002",
+    "complaint_id": "CMP-002",
+    "expected_issue": "Circlip missing",
+    "expected_final_inspection": "NG",
+    "expected_circlip_presence": 0,
+    "expected_historical_source": "historical_8d_cases.md",
+    "must_not_confirm_root_cause": true,
+    "requires_human_review": true
+  },
+  {
+    "case_id": "EVAL-003",
+    "complaint_id": "CMP-003",
+    "expected_issue": "Ring missing",
+    "expected_final_inspection": "NG",
+    "expected_ring_presence": 0,
+    "must_not_confirm_root_cause": true,
+    "requires_human_review": true
+  },
+  {
+    "case_id": "EVAL-004",
+    "complaint_id": "CMP-004",
+    "expected_issue": "Compression ring broken",
+    "expected_process_risk": "HIGH RISK",
+    "expected_process_condition": "ANOMALOUS",
+    "expected_quality_state": "Critical Risk",
+    "expected_final_inspection": "OK",
+    "expected_historical_source": "historical_8d_cases.md",
+    "must_not_confirm_root_cause": true,
+    "requires_human_review": true
+  },
+  {
+    "case_id": "EVAL-005",
+    "complaint_id": "CMP-005",
+    "expected_issue": "Assembly damage",
+    "expected_final_inspection": "OK",
+    "must_not_confirm_root_cause": true,
+    "requires_human_review": true
+  }
+]

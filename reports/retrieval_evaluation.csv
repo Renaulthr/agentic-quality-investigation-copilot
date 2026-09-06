@@ -1,0 +1,4 @@
+question,expected_source,retrieved_sources,hit_at_k,rank,reciprocal_rank
+What controls are defined for detecting a missing circlip?,control_plan_piston_assembly.md,pfmea_piston_assembly.md | control_plan_piston_assembly.md | inspection_standard.md,1,2,0.5
+What historical evidence exists for a compression ring breaking after final inspection?,historical_8d_cases.md,historical_8d_cases.md | pfmea_piston_assembly.md | pfmea_piston_assembly.md,1,1,1.0
+What process variables should be reviewed for a broken compression ring?,pfmea_piston_assembly.md,pfmea_piston_assembly.md | pfmea_piston_assembly.md | historical_8d_cases.md,1,1,1.0
