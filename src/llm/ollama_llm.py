@@ -6,17 +6,25 @@ from ollama import Client
 
 from src.llm.base import BaseLLM
 
+import os
+
+
+OLLAMA_BASE_URL = os.getenv(
+    "OLLAMA_BASE_URL",
+    "http://127.0.0.1:11434",
+)
+url = f"{OLLAMA_BASE_URL}/api/generate"
 
 class OllamaLLM(BaseLLM):
 
     def __init__(
         self,
         model: str = "llama3.2",
-        host: str = "http://localhost:11434",
+        host: str = "http://127.0.0.1:11434",
     ):
         self.model = model
         self.client = Client(
-            host=host
+            host=OLLAMA_BASE_URL
         )
 
     @mlflow.trace(
