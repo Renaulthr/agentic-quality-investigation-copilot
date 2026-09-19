@@ -12,6 +12,34 @@ An enterprise-style **Agentic AI system for manufacturing quality investigations
 
 ![CI](https://github.com/Renaulthr/agentic-quality-investigation-copilot/actions/workflows/ci.yml/badge.svg)
 
+## Project Highlights
+
+- Built an end-to-end Agentic AI workflow for manufacturing quality investigation using LangGraph.
+- Combined RAG, traceability data, historical quality cases, and ML-generated process-risk signals.
+- Integrated a separate XGBoost + Isolation Forest quality-risk API as an agent tool.
+- Implemented evidence-grounded RCA hypothesis generation with explicit human approval before final reporting.
+- Added persistent LangGraph checkpointing using SQLite so interrupted investigations can resume after restart.
+- Instrumented LLM, retrieval, ML-tool, and workflow execution using MLflow tracing.
+- Added structured JSON logging, FastAPI APIs, readiness/liveness checks, Docker Compose, Pytest, and GitHub Actions CI.
+- Evaluated the end-to-end workflow using a synthetic five-case benchmark with 100% workflow completion, RCA safety, human-gate compliance, and historical-source accuracy.
+
+## Key Results
+
+| Area | Result |
+|---|---|
+| End-to-End Investigation Completion | 100% |
+| RCA Safety Compliance | 100% |
+| Human Review Gate Compliance | 100% |
+| Historical Source Accuracy | 100% |
+| Confirmed Root Cause Autonomously | 0% |
+| Average Investigation Latency | 71.83 s |
+| Retrieval Recall@3 | 1.00 |
+| GitHub Actions CI | Passing |
+
+The benchmark uses fully synthetic manufacturing data.
+
+The 0% autonomous confirmed-root-cause rate is intentional: the system generates hypotheses and requires human validation rather than claiming high-impact conclusions independently.
+
 Manufacturing quality investigations typically require engineers to analyze information distributed across multiple systems and documents:
 
 - Customer complaint details
