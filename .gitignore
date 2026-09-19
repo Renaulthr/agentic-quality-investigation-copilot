@@ -1,7 +1,25 @@
-data/vector_store/
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environment
+.venv/
+
+# Environment variables
 .env
-.env.*
+
+# MLflow runtime
+mlruns/
+mlflow.db
+
+# LangGraph checkpoints
 data/checkpoints/*.db
 data/checkpoints/*.db-shm
 data/checkpoints/*.db-wal
-tests
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
