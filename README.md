@@ -5,8 +5,12 @@ An enterprise-style **Agentic AI system for manufacturing quality investigations
 > **Portfolio Disclaimer:** All complaint records, traceability data, quality documents, historical cases, and evaluation datasets used in this repository are synthetic and created exclusively for learning and portfolio demonstration. No confidential employer, customer, or production data is included.
 
 ---
+## Architecture
 
+![Agentic Quality Investigation Copilot Architecture](docs/architecture.png)
 ## Project Overview
+
+![CI](https://github.com/Renaulthr/agentic-quality-investigation-copilot/actions/workflows/ci.yml/badge.svg)
 
 Manufacturing quality investigations typically require engineers to analyze information distributed across multiple systems and documents:
 
