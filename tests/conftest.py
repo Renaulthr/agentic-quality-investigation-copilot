@@ -6,5 +6,10 @@ from api.main import app
 
 @pytest.fixture
 def client():
-    with TestClient(app) as test_client:
-        yield test_client
+    """
+    Lightweight API test client.
+
+    Application lifespan is intentionally not executed for isolated
+    endpoint tests.
+    """
+    return TestClient(app)

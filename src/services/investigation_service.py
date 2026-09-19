@@ -27,8 +27,45 @@ class InvestigationService:
     """
 
     def __init__(self) -> None:
-        # Build once so the same graph/checkpointer is reused.
-        self.graph = build_investigation_graph()
+        """
+        Create the service without building the LangGraph workflow.
+
+        The graph is initialized lazily only when an investigation
+        actually needs to run. This keeps API startup and unit tests fast.
+        """
+        self._graph = None
+
+    @property
+    def graph(self):
+        """
+        Lazily initialize and cache the investigation graph.
+
+        Health/readiness endpoints and lightweight API tests therefore
+        do not initialize the RAG/agent workflow unnecessarily.
+        """
+        if self._graph is None:
+            logger.info(
+                "Initializing investigation graph",
+                extra={
+                    "workflow_stage": "graph_initialization",
+                    "status": "starting",
+                },
+            )
+
+            start_time = time.perf_counter()
+
+            self._graph = build_investigation_graph()
+
+            logger.info(
+                "Investigation graph initialized",
+                extra={
+                    "workflow_stage": "graph_initialization",
+                    "status": "ready",
+                    "latency_ms": self._latency_ms(start_time),
+                },
+            )
+
+        return self._graph    
 
     @staticmethod
     def _build_config(
