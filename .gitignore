@@ -1,25 +1,39 @@
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
 
-# Virtual environment
+# Virtual environments
 .venv/
+venv/
 
 # Environment variables
 .env
+.env.local
 
-# MLflow runtime
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MLflow
 mlruns/
+mlartifacts/
 mlflow.db
 
-# LangGraph checkpoints
+# LangGraph runtime checkpoints
 data/checkpoints/*.db
 data/checkpoints/*.db-shm
 data/checkpoints/*.db-wal
 
-# OS / IDE
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
