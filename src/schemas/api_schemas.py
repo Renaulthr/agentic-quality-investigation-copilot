@@ -56,3 +56,18 @@ class HealthResponse(BaseModel):
 
 class ErrorResponse(BaseModel):
     detail: str
+
+from typing import Dict, Optional
+
+from pydantic import BaseModel
+
+
+class DependencyStatus(BaseModel):
+    status: str
+    detail: Optional[str] = None
+
+
+class ReadinessResponse(BaseModel):
+    status: str
+    service: str
+    dependencies: Dict[str, DependencyStatus]    

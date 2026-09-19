@@ -56,6 +56,7 @@ def get_complaint(
     return {
         "found": True,
         "data": record,
+        "error": None,
     }
 
 

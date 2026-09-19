@@ -1,312 +1,381 @@
-from typing import Any, Dict
-from uuid import uuid4
+import time
+import uuid
+from typing import Any, Dict, Optional
 
+import mlflow
 from langgraph.types import Command
 
-from src.agents.investigation_graph import (
-    build_investigation_graph,
-)
+from src.agents.investigation_graph import build_investigation_graph
+from src.logging_config.logger import get_logger
+from src.tools.complaint_tool import get_complaint
 
-from src.tools.complaint_tool import (
-    get_complaint,
-)
+
+logger = get_logger(__name__)
 
 
 class InvestigationService:
     """
-    Application service for starting and resuming
-    manufacturing quality investigations.
+    Service layer for managing quality investigations.
 
-    The LangGraph instance is created once and reused
-    so that checkpoint state remains available during
-    the application process lifetime.
+    Responsibilities:
+    - Validate complaint IDs.
+    - Start LangGraph investigation workflows.
+    - Preserve investigation/thread identity.
+    - Handle human-in-the-loop interruptions.
+    - Resume investigations after human review.
+    - Produce structured operational logs.
     """
 
     def __init__(self) -> None:
-
-        self.graph = (
-            build_investigation_graph()
-        )
-
-    # --------------------------------------------------
-    # Internal helpers
-    # --------------------------------------------------
+        # Build once so the same graph/checkpointer is reused.
+        self.graph = build_investigation_graph()
 
     @staticmethod
     def _build_config(
         investigation_id: str,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
-        Build the LangGraph configuration.
+        LangGraph uses investigation_id as thread_id.
 
-        investigation_id is also used as the LangGraph
-        thread_id so the same investigation can later
-        be resumed after human review.
+        With the persistent SQLite checkpointer, this allows the
+        investigation to be resumed even after an application restart.
         """
-
         return {
             "configurable": {
-                "thread_id":
-                    investigation_id
+                "thread_id": investigation_id,
             }
         }
 
     @staticmethod
     def _extract_interrupt(
         result: Dict[str, Any],
-    ) -> bool:
+    ) -> Optional[Any]:
         """
-        Determine whether LangGraph paused for
-        human review.
+        Extract the LangGraph interrupt payload when the workflow
+        pauses for human review.
         """
+        interrupts = result.get("__interrupt__")
 
-        interrupts = result.get(
-            "__interrupt__",
-            [],
+        if not interrupts:
+            return None
+
+        interrupt = interrupts[0]
+
+        return getattr(
+            interrupt,
+            "value",
+            interrupt,
         )
 
-        return bool(
-            interrupts
+    @staticmethod
+    def _latency_ms(
+        start_time: float,
+    ) -> float:
+        """Calculate elapsed execution time in milliseconds."""
+        return round(
+            (time.perf_counter() - start_time) * 1000,
+            2,
         )
 
-    # --------------------------------------------------
-    # Start investigation
-    # --------------------------------------------------
-
+    @mlflow.trace(
+        name="start_investigation",
+        span_type="CHAIN",
+    )
     def start_investigation(
         self,
         complaint_id: str,
     ) -> Dict[str, Any]:
+        """
+        Start a new quality investigation.
 
-        complaint_id = (
-            complaint_id
-            .strip()
-            .upper()
-        )
+        The workflow executes until the LangGraph human-review
+        interrupt is reached.
+        """
+        start_time = time.perf_counter()
 
-        if not complaint_id:
+        complaint_id = complaint_id.strip()
+
+        # ---------------------------------------------------------
+        # 1. Validate complaint
+        # ---------------------------------------------------------
+
+        complaint = get_complaint(complaint_id)
+
+        if not complaint:
+            logger.warning(
+                "Investigation rejected because complaint was not found",
+                extra={
+                    "complaint_id": complaint_id,
+                    "workflow_stage": "validation",
+                    "status": "invalid_complaint",
+                    "latency_ms": self._latency_ms(start_time),
+                },
+            )
 
             raise ValueError(
-                "Complaint ID cannot be empty."
+                f"Complaint '{complaint_id}' was not found."
             )
 
-        # Validate complaint before launching
-        # expensive RAG / ML / LLM processing.
+        # ---------------------------------------------------------
+        # 2. Create investigation identity
+        # ---------------------------------------------------------
 
-        complaint = get_complaint(
-            complaint_id
+        investigation_id = f"INV-{uuid.uuid4().hex[:12].upper()}"
+
+        config = self._build_config(
+            investigation_id
         )
 
-        if not complaint.get(
-            "found",
-            False,
-        ):
-
-            raise ValueError(
-                f"Complaint ID "
-                f"'{complaint_id}' "
-                f"was not found."
-            )
-
-        investigation_id = (
-            f"INV-{uuid4().hex[:12].upper()}"
+        logger.info(
+            "Investigation started",
+            extra={
+                "investigation_id": investigation_id,
+                "complaint_id": complaint_id,
+                "workflow_stage": "investigation_start",
+                "status": "started",
+            },
         )
 
-        config = (
-            self._build_config(
-                investigation_id
-            )
-        )
+        # ---------------------------------------------------------
+        # 3. Execute LangGraph workflow
+        # ---------------------------------------------------------
 
         try:
-
             result = self.graph.invoke(
                 {
-                    "complaint_id":
-                        complaint_id,
-
-                    "errors":
-                        [],
+                    "complaint_id": complaint_id,
                 },
                 config=config,
             )
 
-        except Exception as error:
-
-            raise RuntimeError(
-                "Investigation workflow failed: "
-                f"{error}"
-            ) from error
-
-        human_review_required = (
-            self._extract_interrupt(
+            interrupt_payload = self._extract_interrupt(
                 result
             )
-        )
 
-        if human_review_required:
+            # -----------------------------------------------------
+            # 4. Human-review interrupt reached
+            # -----------------------------------------------------
 
-            status = (
-                "awaiting_human_review"
+            if interrupt_payload is not None:
+                latency_ms = self._latency_ms(
+                    start_time
+                )
+
+                logger.info(
+                    "Investigation awaiting human review",
+                    extra={
+                        "investigation_id": investigation_id,
+                        "complaint_id": complaint_id,
+                        "workflow_stage": "human_review",
+                        "status": "awaiting_human_review",
+                        "latency_ms": latency_ms,
+                    },
+                )
+
+                return {
+                    "investigation_id": investigation_id,
+                    "complaint_id": complaint_id,
+                    "status": "awaiting_human_review",
+                    "investigation_summary": result.get(
+                        "investigation_summary"
+                    ),
+                    "root_cause_hypothesis": result.get(
+                        "root_cause_hypothesis"
+                    ),
+                    "evidence_strength": result.get(
+                        "evidence_strength"
+                    ),
+                    "confidence": result.get(
+                        "confidence"
+                    ),
+                    "requires_human_review": True,
+                    "errors": result.get(
+                        "errors",
+                        [],
+                    ),
+                }
+
+            # -----------------------------------------------------
+            # 5. Workflow completed without interrupt
+            # -----------------------------------------------------
+
+            latency_ms = self._latency_ms(
+                start_time
             )
 
-        elif result.get(
-            "final_report"
-        ):
+            logger.info(
+                "Investigation completed without human interrupt",
+                extra={
+                    "investigation_id": investigation_id,
+                    "complaint_id": complaint_id,
+                    "workflow_stage": "investigation_complete",
+                    "status": "completed",
+                    "latency_ms": latency_ms,
+                },
+            )
 
-            status = "completed"
-
-        else:
-
-            status = "processing_incomplete"
-
-        return {
-            "investigation_id":
-                investigation_id,
-
-            "complaint_id":
-                complaint_id,
-
-            "status":
-                status,
-
-            "investigation_summary":
-                result.get(
+            return {
+                "investigation_id": investigation_id,
+                "complaint_id": complaint_id,
+                "status": "completed",
+                "investigation_summary": result.get(
                     "investigation_summary"
                 ),
-
-            "root_cause_hypothesis":
-                result.get(
+                "root_cause_hypothesis": result.get(
                     "root_cause_hypothesis"
                 ),
-
-            "evidence_strength":
-                result.get(
+                "evidence_strength": result.get(
                     "evidence_strength"
                 ),
-
-            "confidence":
-                result.get(
+                "confidence": result.get(
                     "confidence"
                 ),
-
-            "requires_human_review":
-                human_review_required,
-
-            "errors":
-                result.get(
+                "requires_human_review": False,
+                "errors": result.get(
                     "errors",
                     [],
                 ),
-        }
+            }
 
-    # --------------------------------------------------
-    # Human review / resume
-    # --------------------------------------------------
+        except Exception as error:
+            latency_ms = self._latency_ms(
+                start_time
+            )
 
+            logger.exception(
+                "Investigation workflow failed",
+                extra={
+                    "investigation_id": investigation_id,
+                    "complaint_id": complaint_id,
+                    "workflow_stage": "investigation",
+                    "status": "failed",
+                    "latency_ms": latency_ms,
+                    "error": str(error),
+                },
+            )
+
+            raise RuntimeError(
+                f"Investigation workflow failed: {error}"
+            ) from error
+
+    @mlflow.trace(
+        name="review_investigation",
+        span_type="CHAIN",
+    )
     def review_investigation(
         self,
         investigation_id: str,
         approved: bool,
-        comment: str | None = None,
+        comment: Optional[str] = None,
     ) -> Dict[str, Any]:
+        """
+        Resume an investigation that is waiting at the
+        human-approval interrupt.
+        """
+        start_time = time.perf_counter()
 
-        investigation_id = (
+        investigation_id = investigation_id.strip()
+
+        config = self._build_config(
             investigation_id
-            .strip()
         )
 
-        if not investigation_id:
-
-            raise ValueError(
-                "Investigation ID "
-                "cannot be empty."
-            )
-
-        config = (
-            self._build_config(
-                investigation_id
-            )
+        review_status = (
+            "approved"
+            if approved
+            else "rejected"
         )
 
-        resume_payload = {
-            "approved":
-                approved,
-
-            "comment":
-                comment,
-        }
+        logger.info(
+            "Human review received",
+            extra={
+                "investigation_id": investigation_id,
+                "workflow_stage": "human_review",
+                "status": review_status,
+            },
+        )
 
         try:
+            # -----------------------------------------------------
+            # 1. Resume same LangGraph thread
+            # -----------------------------------------------------
 
             result = self.graph.invoke(
                 Command(
-                    resume=resume_payload
+                    resume={
+                        "approved": approved,
+                        "comment": comment,
+                    }
                 ),
                 config=config,
             )
 
-        except Exception as error:
+            # -----------------------------------------------------
+            # 2. Determine final workflow status
+            # -----------------------------------------------------
 
-            raise RuntimeError(
-                "Investigation resume failed: "
-                f"{error}"
-            ) from error
+            final_status = (
+                "completed"
+                if approved
+                else "rejected"
+            )
 
-        complaint_id = result.get(
-            "complaint_id",
-            "",
-        )
+            latency_ms = self._latency_ms(
+                start_time
+            )
 
-        human_approved = result.get(
-            "human_approved",
-            approved,
-        )
+            logger.info(
+                "Investigation review completed",
+                extra={
+                    "investigation_id": investigation_id,
+                    "workflow_stage": "human_review",
+                    "status": final_status,
+                    "latency_ms": latency_ms,
+                },
+            )
 
-        if human_approved:
+            # -----------------------------------------------------
+            # 3. Return API-safe result
+            # -----------------------------------------------------
 
-            status = "completed"
-
-        else:
-
-            status = "rejected"
-
-        return {
-            "investigation_id":
-                investigation_id,
-
-            "complaint_id":
-                complaint_id,
-
-            "status":
-                status,
-
-            "human_approved":
-                human_approved,
-
-            "human_comment":
-                result.get(
-                    "human_comment",
-                    comment,
+            return {
+                "investigation_id": investigation_id,
+                "complaint_id": result.get(
+                    "complaint_id"
                 ),
-
-            "final_report":
-                result.get(
+                "status": final_status,
+                "human_approved": approved,
+                "human_comment": comment,
+                "final_report": result.get(
                     "final_report"
                 ),
-
-            "errors":
-                result.get(
+                "errors": result.get(
                     "errors",
                     [],
                 ),
-        }
+            }
+
+        except Exception as error:
+            latency_ms = self._latency_ms(
+                start_time
+            )
+
+            logger.exception(
+                "Human review workflow failed",
+                extra={
+                    "investigation_id": investigation_id,
+                    "workflow_stage": "human_review",
+                    "status": "failed",
+                    "latency_ms": latency_ms,
+                    "error": str(error),
+                },
+            )
+
+            raise RuntimeError(
+                f"Investigation review failed: {error}"
+            ) from error
 
 
-# ------------------------------------------------------
-# Shared application-level service instance
-# ------------------------------------------------------
-
-investigation_service = (
-    InvestigationService()
-)
+# Application-level singleton.
+# The graph/checkpointer is constructed once and reused by API requests.
+investigation_service = InvestigationService()

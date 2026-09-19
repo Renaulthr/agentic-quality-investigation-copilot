@@ -4,6 +4,7 @@ pydantic
 requests
 
 langgraph
+langgraph-checkpoint-sqlite
 langchain
 langchain-community
 langchain-text-splitters

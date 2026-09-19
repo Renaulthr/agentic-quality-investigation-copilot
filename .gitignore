@@ -1,3 +1,7 @@
 data/vector_store/
 .env
 .env.*
+data/checkpoints/*.db
+data/checkpoints/*.db-shm
+data/checkpoints/*.db-wal
+tests

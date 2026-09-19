@@ -19,3 +19,4 @@ tests
 
 requirements.txt
 README*
+data/checkpoints/
